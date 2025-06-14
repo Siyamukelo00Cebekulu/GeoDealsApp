@@ -7,6 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "jsEngine": "jsc",
     "splash": {
       "image": "./assets/icon.png",
       "resizeMode": "contain",
@@ -45,6 +46,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/551dfa91-7b1e-4cc5-a1c3-8ede7c83f29f"
-    }
+    },
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }

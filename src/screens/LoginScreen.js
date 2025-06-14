@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,40 +8,63 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  useAnimatedStyle,
+  interpolateColor,
+  Easing,
+} from 'react-native-reanimated';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({ navigation }) => {
-  // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // Error states
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState('');
 
-  // Toggle password visibility
-  const [showPassword, setShowPassword] = useState(false);
+  const glow = useSharedValue(0);
 
-  // Form validation and login handling
+  useEffect(() => {
+    glow.value = withRepeat(
+      withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedTextStyle = useAnimatedStyle(() => {
+    const color = interpolateColor(
+      glow.value,
+      [0, 1],
+      ['#D80032', '#FF6B6B']
+    );
+
+    const translateY = Math.sin(glow.value * Math.PI * 2) * 5;
+
+    return {
+      color,
+      transform: [{ translateY }],
+    };
+  });
+
   const handleLogin = () => {
     let isValid = true;
     setEmailError('');
     setPasswordError('');
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Validate email format
     if (!emailRegex.test(email)) {
       setEmailError('Please enter a valid email address');
       isValid = false;
     }
-
-    // Validate password length
     if (password.length < 6) {
       setPasswordError('Password must be at least 6 characters');
       isValid = false;
     }
 
-    // Navigate if valid
     if (isValid) {
       navigation.navigate('Home');
     }
@@ -51,24 +74,33 @@ const LoginScreen = ({ navigation }) => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <Text style={styles.title}>🔥 Hot Deals Near Me</Text>
+
+      <Animated.Text style={[styles.title, animatedTextStyle, {
+        textShadowColor: '#FF3C3C',
+        textShadowRadius: 6,
+        textShadowOffset: { width: 1, height: 1 }
+      }]}>
+        🔥 Hot Deals Near Me
+      </Animated.Text>
 
       <View style={styles.inputContainer}>
-        {/* Email input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          placeholderTextColor="#bbb"
-        />
+        <View style={styles.inputWrapper}>
+          <Icon name="email" size={20} color="#D80032" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            placeholderTextColor="#bbb"
+          />
+        </View>
         {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-        {/* Password input with toggle */}
-        <View style={styles.passwordContainer}>
+        <View style={styles.inputWrapper}>
+          <Icon name="lock" size={20} color="#D80032" style={styles.icon} />
           <TextInput
-            style={styles.passwordInput}
+            style={styles.input}
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
@@ -76,22 +108,24 @@ const LoginScreen = ({ navigation }) => {
             placeholderTextColor="#bbb"
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Text style={styles.toggleText}>
-              {showPassword ? 'Hide' : 'Show'}
-            </Text>
+            <Icon
+              name={showPassword ? 'visibility-off' : 'visibility'}
+              size={20}
+              color="#D80032"
+            />
           </TouchableOpacity>
         </View>
         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
-        {/* Login button */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
 
-        {/* Sign up prompt */}
         <Text style={styles.signupText}>
           Don't have an account?{' '}
-          <Text style={styles.signupLink}>Sign up</Text>
+          <Text style={styles.signupLink} onPress={() => navigation.navigate('Signup')}>
+            Sign up
+          </Text>
         </Text>
       </View>
     </KeyboardAvoidingView>
@@ -106,15 +140,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   title: {
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#D80032',
     marginBottom: 30,
     fontStyle: 'italic',
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.1)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   inputContainer: {
     backgroundColor: '#fff',
@@ -126,15 +156,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  input: {
-    backgroundColor: '#f3f3f3',
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    height: 50,
-    fontSize: 16,
-    color: '#333',
-  },
-  passwordContainer: {
+  inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f3f3f3',
@@ -143,16 +165,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
     height: 50,
   },
-  passwordInput: {
+  input: {
     flex: 1,
     fontSize: 16,
     color: '#333',
+    paddingLeft: 10,
   },
-  toggleText: {
-    color: '#D80032',
-    fontWeight: 'bold',
-    paddingHorizontal: 10,
-    fontSize: 14,
+  icon: {
+    marginRight: 5,
   },
   errorText: {
     color: 'red',

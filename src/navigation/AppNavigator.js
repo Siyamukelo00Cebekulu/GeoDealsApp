@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SubscriptionScreen from '../screens/SubscriptionScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +36,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Subscription"
           component={SubscriptionScreen}
+          options={{ title: 'Choose Plan', headerStyle: { backgroundColor: '#6BCB77' }, headerTintColor: '#fff' }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={{ title: 'Choose Plan', headerStyle: { backgroundColor: '#6BCB77' }, headerTintColor: '#fff' }}
         />
       </Stack.Navigator>
