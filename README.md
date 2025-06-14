@@ -38,7 +38,13 @@ A React Native mobile application built with Expo that offers users access to cu
 ## Tech Stack
 
 - ![JavaScript](https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png) 
+
+---
+
 - ![React Native](https://raw.githubusercontent.com/github/explore/main/topics/react-native/react-native.png) 
+
+---
+
 - ![Expo](https://avatars.githubusercontent.com/u/12504344?s=200&v=4) 
 
 ---
