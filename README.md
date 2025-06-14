@@ -1,6 +1,6 @@
 # Deals App
 
-A React Native mobile application built with Expo that offers users access to curated deals based on their subscription plan. The app includes user authentication and profile management with subscription options.
+A React Native mobile application built with Expo
 
 ---
 
