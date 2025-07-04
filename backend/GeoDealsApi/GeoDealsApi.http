@@ -1,0 +1,6 @@
+@GeoDealsApi_HostAddress = http://localhost:5036
+
+GET {{GeoDealsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
